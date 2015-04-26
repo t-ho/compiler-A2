@@ -1,0 +1,11 @@
+Compiling test-rec06.pl0
+    13     r: RT2;    // duplicate declaration
+******     ^  Error: r already declared
+Parsing complete
+    16   r.w := true;
+******   ^  Error: record doesn't contain field w
+******    ^  Error: variable (i.e., L-Value) expected
+    18   write r.v
+******         ^  Error: record doesn't contain field v
+Static semantic analysis complete
+4 errors detected.

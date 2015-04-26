@@ -1,0 +1,9 @@
+Compiling test-rec03.pl0
+Parsing complete
+    10   r.y := 1;
+******   ^  Error: record doesn't contain field y
+******    ^  Error: variable (i.e., L-Value) expected
+    12   write r.y
+******         ^  Error: record doesn't contain field y
+Static semantic analysis complete
+3 errors detected.

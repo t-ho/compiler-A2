@@ -1,0 +1,15 @@
+Compiling test-rec09.pl0
+     5           x int;
+******             ^  Error: PL0 syntax error
+    12   r y := 1;
+******     ^  Error: PL0 syntax error
+    13   write r.;
+******           ^  Error: PL0 syntax error
+Parsing complete
+    11   r.x := 0;
+******   ^  Error: must be a record type, found ref(error_type)
+******    ^  Error: variable (i.e., L-Value) expected
+    14   write r.y
+******         ^  Error: must be a record type, found ref(error_type)
+Static semantic analysis complete
+6 errors detected.

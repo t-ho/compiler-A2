@@ -1,0 +1,6 @@
+Compiling test-pointerd.pl0
+Parsing complete
+    11     if x = y then write 1 else write 2;  // type mismatch in comparison
+******          ^  Error: Type of argument (ref(^int)*ref(^boolean)) does not match (((nil_type*nil_type)->boolean) & ((int*int)->boolean) & ((boolean*boolean)->boolean) & ((^int*^int)->boolean) & ((^boolean*^boolean)->boolean))
+Static semantic analysis complete
+1 error detected.

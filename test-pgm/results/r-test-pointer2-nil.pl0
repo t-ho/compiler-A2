@@ -1,0 +1,14 @@
+Compiling test-pointer2-nil.pl0
+Parsing complete
+Static semantic analysis complete
+Code generation complete
+No errors detected.
+Running ...
+
+Runtime error: nil pointer dereference
+PC=1038 in PROC   q : PROCEDURE level 1 start 1012 : 1045 FP=4 SL=0 DL=0 RA=1011
+PC=1011 in PROC   <main> : PROCEDURE level 0 start 1003 : 1012 FP=0 SL=0 DL=0 RA=0
+  p(3) = 10000
+End of traceBack
+
+Terminated

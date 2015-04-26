@@ -1,0 +1,6 @@
+Compiling test-pointer9.pl0
+Parsing complete
+     8     x := n;   // invalid
+******          ^  Error: cannot treat int as ^int
+Static semantic analysis complete
+1 error detected.
