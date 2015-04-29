@@ -149,7 +149,11 @@ non terminal ConstExp         Constant;
 non terminal                  TypeDefSeq, 
                               TypeDef;
 non terminal Type             Type,
-                              TypeIdentifier;
+                              TypeIdentifier,
+                              RecordType,
+                              PointerType;
+non terminal Type.RecordType  FieldList;
+non terminal Type.Field		  Field;
 non terminal                  VarDeclSeq, 
                               VarDecl;
 non terminal DeclNode.ProcedureNode ProcedureDef;
@@ -337,11 +341,20 @@ Type ::= TypeIdentifier:type
         {:
             RESULT = new Type.SubrangeType( lo, hi );
         :}
+    | PointerType:type
+    	{:
+    		RESULT = type;
+    	:}
+    | RecordType:type
+    	{:
+    		RESULT = type;
+    	:}
     | error:err
         {:
             RESULT = Type.ERROR_TYPE;
         :}
     ;
+    
 TypeIdentifier ::= IDENTIFIER:id
         {: /* As the type identifier may not be defined at this point
             * the abstract syntax tree records the id, as well as the 
@@ -351,7 +364,42 @@ TypeIdentifier ::= IDENTIFIER:id
                                          new Position( idleft ) );
         :}
     ;
-
+    
+PointerType ::= POINTER TypeIdentifier:type
+		{:
+			RESULT = new Type.PointerType(type);
+		:}
+	;
+	
+RecordType ::= KW_RECORD KW_END
+		{:
+			RESULT = new Type.RecordType();
+		:}
+	| KW_RECORD FieldList:fl KW_END
+		{:
+			RESULT = fl;
+		:}
+	;	
+	
+FieldList ::= Field:f
+		{:
+			RESULT = new Type.RecordType();
+			RESULT.add(f);
+		:}
+	| FieldList:fl SEMICOLON Field:f
+		{:
+			fl.add(f);
+			RESULT = fl;	
+		:}
+	;
+	
+Field ::= IDENTIFIER:id COLON TypeIdentifier:type
+		{:
+			Position pos = new Position(idleft);
+			RESULT = new Type.Field(pos, id, type);
+		:}	
+	;
+	
 VarDeclSeq ::= VarDecl
     |  VarDeclSeq VarDecl
     ;
