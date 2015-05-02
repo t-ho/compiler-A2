@@ -152,7 +152,8 @@ non terminal Type             Type,
                               TypeIdentifier,
                               RecordType,
                               PointerType;
-non terminal Type.RecordType  FieldList;
+non terminal Type.RecordType  FieldList,
+							  Fields;
 non terminal Type.Field		  Field;
 non terminal                  VarDeclSeq, 
                               VarDecl;
@@ -371,25 +372,31 @@ PointerType ::= POINTER TypeIdentifier:type
 		:}
 	;
 	
-RecordType ::= KW_RECORD KW_END
+RecordType ::= KW_RECORD FieldList:fieldList KW_END
 		{:
-			RESULT = new Type.RecordType();
+			RESULT = fieldList;
 		:}
-	| KW_RECORD FieldList:fl KW_END
-		{:
-			RESULT = fl;
-		:}
-	;	
+	;
 	
-FieldList ::= Field:f
+FieldList ::= Fields:fields
+		{:
+			RESULT = fields;
+		:}
+	|	
 		{:
 			RESULT = new Type.RecordType();
-			RESULT.add(f);
 		:}
-	| FieldList:fl SEMICOLON Field:f
+	; 
+	
+Fields ::= Field:field
 		{:
-			fl.add(f);
-			RESULT = fl;	
+			RESULT = new Type.RecordType();
+			RESULT.add(field);
+		:}
+	| Fields:fields SEMICOLON Field:field
+		{:
+			fields.add(field);
+			RESULT = fields;	
 		:}
 	;
 	
