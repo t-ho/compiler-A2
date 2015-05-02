@@ -527,6 +527,15 @@ LValue ::= IDENTIFIER:id
         {:
             RESULT = new ExpNode.IdentifierNode( new Position(idleft), id );
         :}
+	|  LValue:lvalue PERIOD IDENTIFIER:id
+		{:
+			ExpNode.IdentifierNode fieldName = new ExpNode.IdentifierNode( new Position(idleft), id );
+			RESULT = new ExpNode.FieldAccessNode( new Position(lvalueleft), lvalue, fieldName );
+		:}
+	|  LValue:lvalue POINTER
+		{:
+			RESULT = new ExpNode.PointerDereferenceNode( new Position(lvalueleft), lvalue );
+		:}      
     ;
 
 /* To allow for adding logical expressions. */
