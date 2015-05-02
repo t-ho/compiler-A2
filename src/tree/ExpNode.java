@@ -1,5 +1,6 @@
 package tree;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -230,6 +231,16 @@ public abstract class ExpNode {
         public ArgumentsNode( ExpNode... exps ) {
             this( Arrays.asList( exps ) );
         }
+        /** Construct an empty argument list */
+        public ArgumentsNode() {
+        	super(Position.NO_POSITION);
+        	this.args = new ArrayList<ExpNode>();
+        }
+        /** Add an argument to argument list */
+        public void add(ExpNode argument) {
+        	this.args.add(argument);
+        }
+        
         public List<ExpNode> getArgs() {
             return args;
         }
@@ -354,6 +365,10 @@ public abstract class ExpNode {
     	public ExpNode getPointer() {
     		return this.pointer;
     	}
+    	
+    	public void setPointer(ExpNode pointer) {
+    		this.pointer = pointer;
+    	}
 
 		@Override
 		public ExpNode transform(ExpTransform<ExpNode> visitor) {
@@ -381,9 +396,17 @@ public abstract class ExpNode {
 		public ExpNode getRecordName() {
 			return recordName;
 		}
+		
+		public void setRecordName(ExpNode recordName) {
+			this.recordName = recordName;
+		}
 
 		public IdentifierNode getFieldName() {
 			return fieldName;
+		}
+		
+		public void setFieldName(IdentifierNode fieldName) {
+			this.fieldName = fieldName;
 		}
     	
 		@Override
@@ -410,6 +433,10 @@ public abstract class ExpNode {
     		return this.recordType;
     	}
     	
+    	public void setRecordType(Type recordType) {
+    		this.recordType = recordType;
+    	}
+    	
 		@Override
 		public ExpNode transform(ExpTransform<ExpNode> visitor) {
 			// TODO Auto-generated method stub
@@ -422,5 +449,44 @@ public abstract class ExpNode {
 			return null;
 		}
     	
+    }
+    /** Tree node representing a record constructor */
+    public static class RecordConstructorNode extends ExpNode {
+    	private Type recordType;
+    	private ArgumentsNode fieldList;
+    	
+    	public RecordConstructorNode(Position pos, Type recordType, ArgumentsNode fieldList) {
+    		super(pos);
+    		this.recordType = recordType;
+    		this.fieldList = fieldList;
+		}
+    	
+    	public Type getRecordType() {
+    		return this.recordType;
+    	}
+    	
+    	public void setRecordType(Type recordType) {
+    		this.recordType = recordType;
+    	}
+    	
+    	public ArgumentsNode getFieldList() {
+    		return this.fieldList;
+    	}
+    	
+    	public void setFieldList(ArgumentsNode fieldList) {
+    		this.fieldList = fieldList;
+    	}
+    	
+		@Override
+		public ExpNode transform(ExpTransform<ExpNode> visitor) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Code genCode(ExpTransform<Code> visitor) {
+			// TODO Auto-generated method stub
+			return null;
+		}
     }
 }

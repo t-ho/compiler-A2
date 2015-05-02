@@ -176,6 +176,8 @@ non terminal Operator         Relation,
                               MulOp,
                               UnaryOperator;
 non terminal ExpNode          LValue;
+non terminal ExpNode.ArgumentsNode RecordFields;
+non terminal ExpNode.ArgumentsNode ExpList;
 
 /**-------------------------------------------------------------*
  *------------------------ GRAMMAR RULES -----------------------*
@@ -648,15 +650,45 @@ Factor ::= PLUS Factor:e
         {:
             RESULT = lval;
         :}
-   	|  KW_NEW TypeIdentifier:type
+   	|  KW_NEW TypeIdentifier:recordType
    		{:
-   			RESULT = new ExpNode.NewExpNode( new Position(typeleft), type );
+   			Position pos = new Position(recordTypeleft);
+   			RESULT = new ExpNode.NewExpNode( pos, recordType );
+   		:}
+   	|  TypeIdentifier:recordType LCURLY RecordFields:recordFields RCURLY
+   		{:
+   			Position pos = new Position(recordTypeleft);
+   			RESULT = new ExpNode.RecordConstructorNode( pos, recordType, recordFields );
    		:}
     | error:e
         {:
             RESULT = new ExpNode.ErrorNode( new Position(eleft) );
         :}
     ;
+    
+RecordFields ::= ExpList:expList
+		{:
+			RESULT = expList;
+		:}    
+    |
+    	{:
+    		RESULT = new ExpNode.ArgumentsNode();
+    	:}
+    ;
+    
+ExpList ::= Condition:condition
+		{:
+			List<ExpNode> listNode = new ArrayList<ExpNode>();
+			listNode.add(condition);
+			RESULT = new ExpNode.ArgumentsNode(listNode);
+		:}    
+    |  ExpList:expList COMMA Condition:condition
+    	{:
+    		expList.add(condition);
+    		RESULT = expList;
+    	:}
+    ;
+    
 UnaryOperator ::= MINUS:op
         {:
             RESULT = Operator.NEG_OP;
