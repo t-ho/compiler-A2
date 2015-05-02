@@ -648,6 +648,10 @@ Factor ::= PLUS Factor:e
         {:
             RESULT = lval;
         :}
+   	|  KW_NEW TypeIdentifier:type
+   		{:
+   			RESULT = new ExpNode.NewExpNode( new Position(typeleft), type );
+   		:}
     | error:e
         {:
             RESULT = new ExpNode.ErrorNode( new Position(eleft) );

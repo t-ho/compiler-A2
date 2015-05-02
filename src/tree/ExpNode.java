@@ -129,61 +129,7 @@ public abstract class ExpNode {
             return id;
         }
     }
-    /** Tree node representing a pointer dereference. */
-    public static class PointerDereferenceNode extends ExpNode {
-    	private ExpNode pointer;
-    	
-    	public PointerDereferenceNode(Position pos, ExpNode pointer) {
-			super(pos);
-			this.pointer = pointer;
-		}
-    	
-    	public ExpNode getPointer() {
-    		return this.pointer;
-    	}
-
-		@Override
-		public ExpNode transform(ExpTransform<ExpNode> visitor) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public Code genCode(ExpTransform<Code> visitor) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-    }
-    /** Tree node representing a field access */
-    public static class FieldAccessNode extends ExpNode {
-    	private ExpNode recordName;
-    	private IdentifierNode fieldName;
-    	
-    	public FieldAccessNode(Position pos, ExpNode recordName, IdentifierNode fieldName) {
-    		super(pos);
-    		this.recordName = recordName;
-    		this.fieldName = fieldName;
-		}
-    	
-		public ExpNode getRecordName() {
-			return recordName;
-		}
-
-		public IdentifierNode getFieldName() {
-			return fieldName;
-		}
-    	
-		@Override
-		public ExpNode transform(ExpTransform<ExpNode> visitor) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-		@Override
-		public Code genCode(ExpTransform<Code> visitor) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-    }
+    
     /** Tree node representing a variable. */
     public static class VariableNode extends ExpNode {
         /** Symbol table entry for the variable */
@@ -395,5 +341,86 @@ public abstract class ExpNode {
         public String toString() {
             return "WidenSubrange(" + exp + ":" + getType() + ")";
         }
+    }
+    /** Tree node representing a pointer dereference. */
+    public static class PointerDereferenceNode extends ExpNode {
+    	private ExpNode pointer;
+    	
+    	public PointerDereferenceNode(Position pos, ExpNode pointer) {
+			super(pos);
+			this.pointer = pointer;
+		}
+    	
+    	public ExpNode getPointer() {
+    		return this.pointer;
+    	}
+
+		@Override
+		public ExpNode transform(ExpTransform<ExpNode> visitor) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Code genCode(ExpTransform<Code> visitor) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+    }
+    /** Tree node representing a field access */
+    public static class FieldAccessNode extends ExpNode {
+    	private ExpNode recordName;
+    	private IdentifierNode fieldName;
+    	
+    	public FieldAccessNode(Position pos, ExpNode recordName, IdentifierNode fieldName) {
+    		super(pos);
+    		this.recordName = recordName;
+    		this.fieldName = fieldName;
+		}
+    	
+		public ExpNode getRecordName() {
+			return recordName;
+		}
+
+		public IdentifierNode getFieldName() {
+			return fieldName;
+		}
+    	
+		@Override
+		public ExpNode transform(ExpTransform<ExpNode> visitor) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		@Override
+		public Code genCode(ExpTransform<Code> visitor) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+    }
+    /** Tree node representing a "New" expression. */
+    public static class NewExpNode extends ExpNode {
+    	private Type recordType;
+    	
+    	public NewExpNode(Position pos, Type recordType) {
+    		super(pos);
+    		this.recordType = recordType;
+		}
+    	
+    	public Type getRecordType() {
+    		return this.recordType;
+    	}
+    	
+		@Override
+		public ExpNode transform(ExpTransform<ExpNode> visitor) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Code genCode(ExpTransform<Code> visitor) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+    	
     }
 }
