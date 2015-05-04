@@ -377,11 +377,13 @@ public abstract class ExpNode {
     public static class FieldAccessNode extends ExpNode {
     	private ExpNode record;
     	private IdentifierNode field;
+    	private Position periodPosn;
     	
-    	public FieldAccessNode(Position pos, ExpNode record, IdentifierNode field) {
+    	public FieldAccessNode(Position pos, Position periodPosn, ExpNode record, IdentifierNode field) {
     		super(pos);
     		this.record = record;
     		this.field = field;
+    		this.periodPosn = periodPosn;
 		}
     	
 		public ExpNode getRecord() {
@@ -409,6 +411,14 @@ public abstract class ExpNode {
 		public Code genCode(ExpTransform<Code> visitor) {
 			// TODO Auto-generated method stub
 			return visitor.visitFieldAccessNode( this );
+		}
+
+		public Position getPeriodPosn() {
+			return periodPosn;
+		}
+
+		public void setPeriodPosn(Position periodPosn) {
+			this.periodPosn = periodPosn;
 		}
     }
     /** Tree node representing a "New" expression. */

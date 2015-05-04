@@ -2,15 +2,17 @@ type
   T1 = ^int;
   T2 = ^T1;
   T3 = ^R;
+  T4 = ^int;
   R = record x:int end;
 var
   x: T1;
-  y: T2;
+  y: T4;
   z: int;
   w: int;
 begin
   //z := 5;
   //w := z;
-  //x := new ab;
-  x^ := 22
+  //x := new T1;
+  //y := x
+  z^ := 22
 end
