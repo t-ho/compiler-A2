@@ -149,9 +149,9 @@ non terminal ConstExp         Constant;
 non terminal                  TypeDefSeq, 
                               TypeDef;
 non terminal Type             Type,
-                              TypeIdentifier,
                               RecordType,
                               PointerType;
+non terminal Type.IdRefType   TypeIdentifier;
 non terminal Type.RecordType  FieldList,
 							  Fields;
 non terminal Type.Field		  Field;
@@ -159,10 +159,8 @@ non terminal                  VarDeclSeq,
                               VarDecl;
 non terminal DeclNode.ProcedureNode ProcedureDef;
 non terminal Scope            ProcedureHead;
-non terminal 
-                              FormalParamList;
-non terminal 
-                              ActualParamList;
+non terminal 				  FormalParamList;
+non terminal 				  ActualParamList;
 non terminal StatementNode.ListNode StatementList;
 non terminal StatementNode    Statement,
                               CompoundStatement;
@@ -176,8 +174,8 @@ non terminal Operator         Relation,
                               MulOp,
                               UnaryOperator;
 non terminal ExpNode          LValue;
-non terminal ExpNode.ArgumentsNode RecordFields;
-non terminal ExpNode.ArgumentsNode ExpList;
+non terminal List<ExpNode>    RecordFields,
+							  ExpList;
 
 /**-------------------------------------------------------------*
  *------------------------ GRAMMAR RULES -----------------------*
@@ -386,6 +384,7 @@ FieldList ::= Fields:fields
 		:}
 	|	
 		{:
+			// return empty record
 			RESULT = new Type.RecordType();
 		:}
 	; 
@@ -397,8 +396,12 @@ Fields ::= Field:field
 		:}
 	| Fields:fields SEMICOLON Field:field
 		{:
-			fields.add(field);
-			RESULT = fields;	
+			if( ! fields.containsField(field.getId()) ) {
+				fields.add(field);
+			} else { // repeated field name
+				errors.error(field.getId() + " repeated field name", field.getPosn());
+			}
+			RESULT = fields;
 		:}
 	;
 	
@@ -531,8 +534,8 @@ LValue ::= IDENTIFIER:id
         :}
 	|  LValue:lvalue PERIOD IDENTIFIER:id
 		{:
-			ExpNode.IdentifierNode fieldName = new ExpNode.IdentifierNode( new Position(idleft), id );
-			RESULT = new ExpNode.FieldAccessNode( new Position(lvalueleft), lvalue, fieldName );
+			ExpNode.IdentifierNode field = new ExpNode.IdentifierNode( new Position(idleft), id );
+			RESULT = new ExpNode.FieldAccessNode( new Position(lvalueleft), lvalue, field );
 		:}
 	|  LValue:lvalue POINTER
 		{:
@@ -672,15 +675,14 @@ RecordFields ::= ExpList:expList
 		:}    
     |
     	{:
-    		RESULT = new ExpNode.ArgumentsNode();
+    		RESULT = new ArrayList<ExpNode>();
     	:}
     ;
     
 ExpList ::= Condition:condition
 		{:
-			List<ExpNode> listNode = new ArrayList<ExpNode>();
-			listNode.add(condition);
-			RESULT = new ExpNode.ArgumentsNode(listNode);
+			RESULT = new ArrayList<ExpNode>();
+			RESULT.add(condition);
 		:}    
     |  ExpList:expList COMMA Condition:condition
     	{:

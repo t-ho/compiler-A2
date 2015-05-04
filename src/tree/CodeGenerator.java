@@ -8,6 +8,9 @@ import source.Errors;
 import syms.Scope;
 import syms.SymEntry;
 import syms.Type;
+import tree.ExpNode.FieldAccessNode;
+import tree.ExpNode.NewExpNode;
+import tree.ExpNode.PointerDereferenceNode;
 import tree.Tree.*;
 
 /** class CodeGenerator implements code generation using the
@@ -351,6 +354,28 @@ public class CodeGenerator implements TreeVisitor, StatementTransform<Code>,
         // Widening doesn't require anything extra
         return node.getExp().genCode( this );
     }
+
+    /** Generate code for a pointer dereference */
+	@Override
+	public Code visitPointerDereferenceNode(PointerDereferenceNode node) {
+		// TODO Auto-generated method stub
+		Code code = new Code();
+		return code;
+	}
+
+	@Override
+	public Code visitNewExpNode(NewExpNode node) {
+		// TODO Auto-generated method stub
+		Code code = new Code();
+		return code;
+	}
+
+	@Override
+	public Code visitFieldAccessNode(FieldAccessNode node) {
+		// TODO Auto-generated method stub
+		Code code = new Code();
+		return code;
+	}
 
 
 }

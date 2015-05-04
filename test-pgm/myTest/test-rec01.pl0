@@ -1,0 +1,13 @@
+// Correct program with 2 integer fields
+type
+    RT = record
+          x: int;
+          y: int
+        end;
+var 
+    r: RT;
+    z: int;
+begin
+  d.x := 101
+end
+

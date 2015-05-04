@@ -231,15 +231,6 @@ public abstract class ExpNode {
         public ArgumentsNode( ExpNode... exps ) {
             this( Arrays.asList( exps ) );
         }
-        /** Construct an empty argument list */
-        public ArgumentsNode() {
-        	super(Position.NO_POSITION);
-        	this.args = new ArrayList<ExpNode>();
-        }
-        /** Add an argument to argument list */
-        public void add(ExpNode argument) {
-        	this.args.add(argument);
-        }
         
         public List<ExpNode> getArgs() {
             return args;
@@ -373,89 +364,89 @@ public abstract class ExpNode {
 		@Override
 		public ExpNode transform(ExpTransform<ExpNode> visitor) {
 			// TODO Auto-generated method stub
-			return null;
+			return visitor.visitPointerDereferenceNode( this );
 		}
 
 		@Override
 		public Code genCode(ExpTransform<Code> visitor) {
 			// TODO Auto-generated method stub
-			return null;
+			return visitor.visitPointerDereferenceNode( this );
 		}
     }
     /** Tree node representing a field access */
     public static class FieldAccessNode extends ExpNode {
-    	private ExpNode recordName;
-    	private IdentifierNode fieldName;
+    	private ExpNode record;
+    	private IdentifierNode field;
     	
-    	public FieldAccessNode(Position pos, ExpNode recordName, IdentifierNode fieldName) {
+    	public FieldAccessNode(Position pos, ExpNode record, IdentifierNode field) {
     		super(pos);
-    		this.recordName = recordName;
-    		this.fieldName = fieldName;
+    		this.record = record;
+    		this.field = field;
 		}
     	
-		public ExpNode getRecordName() {
-			return recordName;
+		public ExpNode getRecord() {
+			return record;
 		}
 		
-		public void setRecordName(ExpNode recordName) {
-			this.recordName = recordName;
+		public void setRecord(ExpNode recordName) {
+			this.record = recordName;
 		}
 
-		public IdentifierNode getFieldName() {
-			return fieldName;
+		public IdentifierNode getField() {
+			return field;
 		}
 		
-		public void setFieldName(IdentifierNode fieldName) {
-			this.fieldName = fieldName;
+		public void setField(IdentifierNode fieldName) {
+			this.field = fieldName;
 		}
     	
 		@Override
 		public ExpNode transform(ExpTransform<ExpNode> visitor) {
 			// TODO Auto-generated method stub
-			return null;
+			return visitor.visitFieldAccessNode( this );
 		}
 		@Override
 		public Code genCode(ExpTransform<Code> visitor) {
 			// TODO Auto-generated method stub
-			return null;
+			return visitor.visitFieldAccessNode( this );
 		}
     }
     /** Tree node representing a "New" expression. */
     public static class NewExpNode extends ExpNode {
-    	private Type recordType;
+    	private Type.IdRefType pointerType;
     	
-    	public NewExpNode(Position pos, Type recordType) {
+    	public NewExpNode(Position pos, Type.IdRefType recordType) {
     		super(pos);
-    		this.recordType = recordType;
+    		this.pointerType = recordType;
 		}
     	
-    	public Type getRecordType() {
-    		return this.recordType;
+    	public Type.IdRefType getPointerType() {
+    		return this.pointerType;
     	}
     	
-    	public void setRecordType(Type recordType) {
-    		this.recordType = recordType;
+    	public void setPointerType(Type.IdRefType recordType) {
+    		this.pointerType = recordType;
     	}
     	
 		@Override
 		public ExpNode transform(ExpTransform<ExpNode> visitor) {
 			// TODO Auto-generated method stub
-			return null;
+			return visitor.visitNewExpNode ( this );
 		}
 
 		@Override
 		public Code genCode(ExpTransform<Code> visitor) {
 			// TODO Auto-generated method stub
-			return null;
+			return visitor.visitNewExpNode( this );
 		}
     	
     }
     /** Tree node representing a record constructor */
     public static class RecordConstructorNode extends ExpNode {
     	private Type recordType;
-    	private ArgumentsNode fieldList;
+    	private List<ExpNode> fieldList;
     	
-    	public RecordConstructorNode(Position pos, Type recordType, ArgumentsNode fieldList) {
+    	public RecordConstructorNode(Position pos, Type recordType, List<ExpNode> fieldList) {
     		super(pos);
     		this.recordType = recordType;
     		this.fieldList = fieldList;
@@ -469,11 +460,11 @@ public abstract class ExpNode {
     		this.recordType = recordType;
     	}
     	
-    	public ArgumentsNode getFieldList() {
+    	public List<ExpNode> getFieldList() {
     		return this.fieldList;
     	}
     	
-    	public void setFieldList(ArgumentsNode fieldList) {
+    	public void setFieldList(List<ExpNode> fieldList) {
     		this.fieldList = fieldList;
     	}
     	

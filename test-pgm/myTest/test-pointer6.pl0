@@ -1,0 +1,16 @@
+type
+  T1 = ^int;
+  T2 = ^T1;
+  T3 = ^R;
+  R = record x:int end;
+var
+  x: T1;
+  y: T2;
+  z: int;
+  w: int;
+begin
+  //z := 5;
+  //w := z;
+  //x := new T1;
+  x^ := 22
+end

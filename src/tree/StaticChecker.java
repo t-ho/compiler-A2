@@ -5,13 +5,19 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import java_cup.reduce_action;
 import source.Errors;
+import source.Position;
 import syms.Predefined;
 import syms.SymEntry;
 import syms.SymbolTable;
 import syms.Type;
 import syms.Type.IncompatibleTypes;
 import tree.DeclNode.DeclListNode;
+import tree.ExpNode.FieldAccessNode;
+import tree.ExpNode.IdentifierNode;
+import tree.ExpNode.NewExpNode;
+import tree.ExpNode.PointerDereferenceNode;
 import tree.Tree.*;
 
 /** class StaticSemantics - Performs the static semantic checks on
@@ -96,6 +102,7 @@ public class StaticChecker implements TreeVisitor, StatementVisitor,
         node.setExp( exp );
         // Validate that it is a true left value and not a constant.
         Type lvalType = left.getType();
+        //System.err.println("<<visitAsignmentNode>> lvalType: " + lvalType);
         if( ! (lvalType instanceof Type.ReferenceType) ) {
             errors.error( "variable (i.e., L-Value) expected", left.getPosition() );
         } else {
@@ -306,5 +313,77 @@ public class StaticChecker implements TreeVisitor, StatementVisitor,
         // Nothing to do.
         return node;
     }
+	@Override
+	public ExpNode visitPointerDereferenceNode(PointerDereferenceNode node) {
+		// TODO Auto-generated method stub
+		ExpNode pointer = node.getPointer().transform(this);
+		node.setPointer(pointer);
+		
+		Type pointerType = pointer.getType();
+		System.out.println("(visitPointerDereferenceNode) pointerType: " + pointerType);
+		if(pointerType instanceof Type.ReferenceType) {
+			System.out.println("(visitPointerDereferenceNode) pointerType opt: " + pointerType.optDereferenceType());
+			if(pointerType.optDereferenceType() instanceof Type.PointerType) {
+				Type.PointerType p = (Type.PointerType) pointerType.optDereferenceType();
+				node.setType(p.getBaseType());
+			} else if(pointerType.optDereferenceType() != Type.ERROR_TYPE) {
+				errors.error("is not pointer type", node.getPosition());
+			}
+		} else if( pointerType != Type.ERROR_TYPE ) { // avoid cascading errors
+            errors.error( "cannot dereference an expression which isn't a reference",
+                    node.getPosition() );
+        }
+		Type.PointerType p = (Type.PointerType) pointerType.optDereferenceType();
+		System.out.println("(visitPointerDereferenceNode) base type: " + p.getBaseType());
+		return node;
+	}
+	@Override
+	public ExpNode visitNewExpNode(NewExpNode node) {
+		// TODO Auto-generated method stub
+		// First we look up the entry type in the symbol table.
+		SymEntry entry = symtab.lookupType(node.getPointerType().getName());
+		if(entry instanceof SymEntry.TypeEntry) {
+			Type entryType = entry.getType();
+			//System.out.println("Testsdflkjs " + entry.getType());
+			if (entryType instanceof Type.PointerType) {
+				node.setType(entryType);
+			} else if(entryType != Type.ERROR_TYPE ) {
+				errors.error("identifier is not a pointer type", node.getPosition());
+			}
+		} else {
+			errors.error("undeclared pointer type", node.getPosition());
+		}
+		return node;
+	}
+	@Override
+	public ExpNode visitFieldAccessNode(FieldAccessNode node) {
+		// TODO Auto-generated method stub
+		ExpNode record = node.getRecord().transform(this);
+		node.setRecord(record);
+		Type recordType = record.getType();
+		//System.out.println("<<visitFieldAccessNode>> recordType: " + recordType);
+		//System.out.println("<<visitFieldAccessNode>> recordType opt: " + recordType.optDereferenceType());
+		if(recordType instanceof Type.ReferenceType) {
+			// check whether the base type is RecordType or not
+			if(recordType.optDereferenceType() instanceof Type.RecordType) {
+				IdentifierNode field = node.getField();
+				//System.out.println("<<visitFieldAccessNode>> field: " + field);
+				Type.RecordType recordBaseType = (Type.RecordType)recordType.optDereferenceType();
+				Type fieldType = recordBaseType.getFieldType(field.getId());
+				if(fieldType == Type.ERROR_TYPE) {
+					errors.error("record doesn't contain field " + field.getId(), node.getPosition());
+				} else {
+					//System.err.println("<<visitFieldAccessNode>> fieldType: " + fieldType);
+					node.setType(new Type.ReferenceType(fieldType));
+				}
+			} else {
+				errors.error("must be a record type, found " + recordType, node.getPosition());
+			}
+		} else if( recordType != Type.ERROR_TYPE ) { // avoid cascading errors
+            errors.error( "cannot dereference an expression which isn't a reference",
+                    node.getPosition() );
+        }
+		return node;
+	}
 
 }
