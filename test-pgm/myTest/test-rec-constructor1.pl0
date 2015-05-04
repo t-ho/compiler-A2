@@ -1,0 +1,21 @@
+// Record value assignment with pointers
+type
+    RT = record
+          x: RR;
+          y: int
+         end;
+    L = ^RT;
+    RR = record
+          x: int;
+          y: int
+        end;
+    RC = RR;
+var 
+	
+    r1: RT;
+    r2: RR;
+    r3: RC;
+    p: L;
+begin
+  r1 := RT{ r3, r2 }
+end

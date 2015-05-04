@@ -11,6 +11,6 @@ var
 begin
   //z := 5;
   //w := z;
-  //x := new T1;
+  //x := new ab;
   x^ := 22
 end

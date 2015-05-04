@@ -444,12 +444,12 @@ public abstract class ExpNode {
     /** Tree node representing a record constructor */
     public static class RecordConstructorNode extends ExpNode {
     	private Type recordType;
-    	private List<ExpNode> fieldList;
+    	private List<ExpNode> expList;
     	
-    	public RecordConstructorNode(Position pos, Type recordType, List<ExpNode> fieldList) {
+    	public RecordConstructorNode(Position pos, Type recordType, List<ExpNode> expList) {
     		super(pos);
     		this.recordType = recordType;
-    		this.fieldList = fieldList;
+    		this.expList = expList;
 		}
     	
     	public Type getRecordType() {
@@ -460,24 +460,24 @@ public abstract class ExpNode {
     		this.recordType = recordType;
     	}
     	
-    	public List<ExpNode> getFieldList() {
-    		return this.fieldList;
+    	public List<ExpNode> getExpList() {
+    		return this.expList;
     	}
     	
-    	public void setFieldList(List<ExpNode> fieldList) {
-    		this.fieldList = fieldList;
+    	public void setExpList(List<ExpNode> expList) {
+    		this.expList = expList;
     	}
     	
 		@Override
 		public ExpNode transform(ExpTransform<ExpNode> visitor) {
 			// TODO Auto-generated method stub
-			return null;
+			return visitor.visitRecordConstructorNode( this );
 		}
 
 		@Override
 		public Code genCode(ExpTransform<Code> visitor) {
 			// TODO Auto-generated method stub
-			return null;
+			return visitor.visitRecordConstructorNode( this );
 		}
     }
 }

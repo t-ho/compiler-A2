@@ -1,4 +1,5 @@
 package tree;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -18,6 +19,7 @@ import tree.ExpNode.FieldAccessNode;
 import tree.ExpNode.IdentifierNode;
 import tree.ExpNode.NewExpNode;
 import tree.ExpNode.PointerDereferenceNode;
+import tree.ExpNode.RecordConstructorNode;
 import tree.Tree.*;
 
 /** class StaticSemantics - Performs the static semantic checks on
@@ -320,9 +322,9 @@ public class StaticChecker implements TreeVisitor, StatementVisitor,
 		node.setPointer(pointer);
 		
 		Type pointerType = pointer.getType();
-		System.out.println("(visitPointerDereferenceNode) pointerType: " + pointerType);
+		//System.out.println("<<visitPointerDereferenceNode>> pointerType: " + pointerType);
 		if(pointerType instanceof Type.ReferenceType) {
-			System.out.println("(visitPointerDereferenceNode) pointerType opt: " + pointerType.optDereferenceType());
+			//System.out.println("<<visitPointerDereferenceNode>> pointerType opt: " + pointerType.optDereferenceType());
 			if(pointerType.optDereferenceType() instanceof Type.PointerType) {
 				Type.PointerType p = (Type.PointerType) pointerType.optDereferenceType();
 				node.setType(p.getBaseType());
@@ -334,7 +336,7 @@ public class StaticChecker implements TreeVisitor, StatementVisitor,
                     node.getPosition() );
         }
 		Type.PointerType p = (Type.PointerType) pointerType.optDereferenceType();
-		System.out.println("(visitPointerDereferenceNode) base type: " + p.getBaseType());
+		//System.out.println("<<visitPointerDereferenceNode>> base type: " + p.getBaseType());
 		return node;
 	}
 	@Override
@@ -348,7 +350,7 @@ public class StaticChecker implements TreeVisitor, StatementVisitor,
 			if (entryType instanceof Type.PointerType) {
 				node.setType(entryType);
 			} else if(entryType != Type.ERROR_TYPE ) {
-				errors.error("identifier is not a pointer type", node.getPosition());
+				errors.error("not a pointer type", node.getPosition());
 			}
 		} else {
 			errors.error("undeclared pointer type", node.getPosition());
@@ -376,13 +378,62 @@ public class StaticChecker implements TreeVisitor, StatementVisitor,
 					//System.err.println("<<visitFieldAccessNode>> fieldType: " + fieldType);
 					node.setType(new Type.ReferenceType(fieldType));
 				}
-			} else {
+			} else { // not a record type
 				errors.error("must be a record type, found " + recordType, node.getPosition());
 			}
 		} else if( recordType != Type.ERROR_TYPE ) { // avoid cascading errors
             errors.error( "cannot dereference an expression which isn't a reference",
                     node.getPosition() );
         }
+		return node;
+	}
+	@Override
+	public ExpNode visitRecordConstructorNode(RecordConstructorNode node) {
+		// TODO Auto-generated method stub
+		// First we look up the entry type in the symbol table.
+		//System.out.println("<<visitRecordConstructorNode>> recordType: " + node.getRecordType().getName());
+		SymEntry entry = symtab.lookupType(node.getRecordType().getName());
+		if(entry instanceof SymEntry.TypeEntry) {
+			Type entryType = entry.getType();
+			//System.out.println("<<visitRecordConstructorNode>> entryType: " + entryType);
+			if (entryType instanceof Type.RecordType) {
+				node.setType(entryType);
+				Type.RecordType entryRecordType = (Type.RecordType) entryType;
+				List<Type.Field> fieldList = entryRecordType.getFieldList();
+				List<ExpNode> expList = node.getExpList();
+				if(expList.size() == fieldList.size()) {
+					for( int i = 0; i < fieldList.size(); i++) {
+						ExpNode exp = expList.get(i).transform(this);
+						Type expType = exp.getType();
+						Type fieldType = fieldList.get(i).getType();
+						if(fieldType != Type.ERROR_TYPE) {
+							/* if expType is type of reference, we have to 
+							 * dereference it to get base type, then compare with fieldType */
+							if(expType instanceof Type.ReferenceType) {
+								Type expBaseType = expType.optDereferenceType();
+								if(! expBaseType.equals(fieldType)) {
+									errors.error("incompatible type", exp.getPosition());
+								}
+							} else { // expType is not a type of reference
+								if(! expType.equals(fieldType)) {
+									errors.error("incompatible type", exp.getPosition());
+								}
+							}
+						}
+						//System.out.println("<<visitRecordConstructorNode>> expList[" + i + "]: " + expType);
+						System.out.println("<<visitRecordConstructorNode>> fieldList[" + i + "]: " + fieldList.get(i).getType());
+					}
+				} else if (expList.size() < fieldList.size()){
+					errors.error("Too few expressions for fields in record", node.getPosition());
+				} else {
+					errors.error("Too many expressions for fields in record", node.getPosition());
+				}
+			} else if(entryType != Type.ERROR_TYPE ) {
+				errors.error("not a record type", node.getPosition());
+			}
+		} else {
+			errors.error("undeclared record type", node.getPosition());
+		}
 		return node;
 	}
 
