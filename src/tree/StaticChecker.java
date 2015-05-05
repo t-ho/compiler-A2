@@ -407,7 +407,8 @@ public class StaticChecker implements TreeVisitor, StatementVisitor,
 						Type fieldType = fieldList.get(i).getType();
 						if(fieldType != Type.ERROR_TYPE) {
 							/* if expType is type of reference, we have to 
-							 * dereference it to get base type, then compare with fieldType */
+							 * dereference it to get base type, 
+							 * then compare with fieldType to test for compatible type */
 							if(expType instanceof Type.ReferenceType) {
 								Type expBaseType = expType.optDereferenceType();
 								if(! expBaseType.equals(fieldType)) {

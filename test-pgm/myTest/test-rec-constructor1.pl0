@@ -1,7 +1,7 @@
 // Record value assignment with pointers
 type
     RT = record
-          x: RR;
+          x: int;
           y: int
          end;
     L = ^RT;
@@ -17,5 +17,7 @@ var
     r3: RC;
     p: L;
 begin
-  r1 := RT{ r3, r2 }
+  r1 := RT{ 4, 5 };
+  write r1.y;
+  write r1.x
 end

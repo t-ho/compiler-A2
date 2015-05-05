@@ -2,30 +2,14 @@
 type
     RT = record
           x: int;
-          y: RX     // circularly defined
+          y: int     
          end;
-    RX = record
-          r: RT;    // circularly defined
-          z : int;
-          w: XX
-         end;
-    L = ^RX;
+    L = ^RT;
+    RC = RT;
 var 
     r1: RT;
-    r2: RT;
+    r2: RC;
     p: L;
 begin
-  //r1 := RT{ 1, 2 };
-  //r2 := r1;
-  //write r2.x;  
- r2.y := 6
-  //p := new L;
-  //p^ := RX{ r1, 3 };
-  //write p^.r.x;
-  //write p^.r.y;
-  //write p^.z;
-  //p^ := RX{ RT{ 4, 5 }, 6 };
-  //write p^.r.x;
-  //write p^.r.y;
-  //write p^.z
+  r1 := r2
 end

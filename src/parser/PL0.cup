@@ -368,7 +368,12 @@ TypeIdentifier ::= IDENTIFIER:id
     
 PointerType ::= POINTER TypeIdentifier:type
 		{:
-			RESULT = new Type.PointerType(type);
+			Type.PointerType resultType = new Type.PointerType(type);
+			Type.ProductType pairPointerType = new Type.ProductType(resultType, resultType);
+			Type.FunctionType pointerRelational = new Type.FunctionType(pairPointerType, Predefined.BOOLEAN_TYPE);
+    		symtab.addOperator("_=_", Position.NO_POSITION, pointerRelational );
+    		symtab.addOperator("_!=_", Position.NO_POSITION, pointerRelational );
+			RESULT = resultType;
 		:}
 	;
 	
