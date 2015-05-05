@@ -104,7 +104,6 @@ public class StaticChecker implements TreeVisitor, StatementVisitor,
         node.setExp( exp );
         // Validate that it is a true left value and not a constant.
         Type lvalType = left.getType();
-        //System.out.println("<<visitAsignmentNode>> lvalType: " + lvalType);
         if( ! (lvalType instanceof Type.ReferenceType) ) {
             errors.error( "variable (i.e., L-Value) expected", left.getPosition() );
         } else {
@@ -321,10 +320,8 @@ public class StaticChecker implements TreeVisitor, StatementVisitor,
 		ExpNode pointer = node.getPointer().transform(this);
 		node.setPointer(pointer);
 		Type refPointerType = pointer.getType();
-		//System.out.println("<<visitPointerDereferenceNode>> pointerType: " + pointerType);
 		/* Check whether refPointerType is a type of reference of pointer type - ref(PointerType(T)) */
 		if(refPointerType instanceof Type.ReferenceType) {
-			//System.out.println("<<visitPointerDereferenceNode>> pointerType opt: " + pointerType.optDereferenceType());
 			Type pointerType = refPointerType.optDereferenceType();
 			//check whether pointerType is pointer type - PointerType(T) 
 			if(pointerType instanceof Type.PointerType) {
@@ -362,16 +359,12 @@ public class StaticChecker implements TreeVisitor, StatementVisitor,
 		ExpNode record = node.getRecord().transform(this);
 		node.setRecord(record);
 		Type refRecordType = record.getType();
-		//System.out.println("<<visitFieldAccessNode>> recordType: " + recordType);
-		//System.out.println("<<visitFieldAccessNode>> recordType opt: " + recordType.optDereferenceType());
 		if(refRecordType instanceof Type.ReferenceType) {
 			if(refRecordType.optDereferenceType() instanceof Type.RecordType) {
 				IdentifierNode field = node.getField();
-				//System.out.println("<<visitFieldAccessNode>> field: " + field);
 				Type.RecordType recordType = (Type.RecordType) refRecordType.optDereferenceType();
 				if(recordType.containsField(field.getId())) {
 					Type fieldType = recordType.getFieldType(field.getId());
-					//System.out.println("<<visitFieldAccessNode>> fieldType: " + fieldType);
 					node.setType(new Type.ReferenceType(fieldType));
 				} else { // record does not contain field
 					errors.error("record doesn't contain field " + field.getId(), node.getPosition());
@@ -390,11 +383,9 @@ public class StaticChecker implements TreeVisitor, StatementVisitor,
 	public ExpNode visitRecordConstructorNode(RecordConstructorNode node) {
 		// TODO Auto-generated method stub
 		// First we look up the entry type in the symbol table.
-		//System.out.println("<<visitRecordConstructorNode>> recordType: " + node.getRecordType().getName());
 		SymEntry entry = symtab.lookupType(node.getRecordType().getName());
 		if(entry instanceof SymEntry.TypeEntry) {
 			Type entryType = entry.getType();
-			//System.out.println("<<visitRecordConstructorNode>> entryType: " + entryType);
 			if (entryType instanceof Type.RecordType) {
 				node.setType(entryType);
 				Type.RecordType entryRecordType = (Type.RecordType) entryType;
@@ -420,8 +411,6 @@ public class StaticChecker implements TreeVisitor, StatementVisitor,
 								}
 							}
 						}
-						//System.out.println("<<visitRecordConstructorNode>> expList[" + i + "]: " + expType);
-						//System.out.println("<<visitRecordConstructorNode>> fieldList[" + i + "]: " + fieldList.get(i).getType());
 					}
 				} else if (expList.size() < fieldList.size()){
 					errors.error("Too few expressions for fields in record", node.getPosition());

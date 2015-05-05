@@ -14,5 +14,6 @@ begin
   //w := z;
   //x := new T1;
   //y := x
-  z^ := 22
+  x^ := 22;
+  write x^
 end
