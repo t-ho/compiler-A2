@@ -3,10 +3,10 @@ type
   T2 = ^T1;
   T3 = ^R;
   T4 = ^int;
-  R = record x:int end;
+  R = record x:int; b:int end;
 var
   x: T1;
-  y: T4;
+  y: R;
   z: int;
   w: int;
 begin
@@ -14,6 +14,8 @@ begin
   //w := z;
   //x := new T1;
   //y := x
-  x^ := 22;
-  write x^
+  //x^ := 22;
+  y.x := 5;
+  y.b := 6;
+  write y.b
 end

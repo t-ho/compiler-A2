@@ -368,6 +368,8 @@ public class CodeGenerator implements TreeVisitor, StatementTransform<Code>,
 	public Code visitNewExpNode(NewExpNode node) {
 		// TODO Auto-generated method stub
 		Code code = new Code();
+		code.generateOp(Operation.ALLOC_HEAP);
+		code.append(genLoad(node.getType()));
 		return code;
 	}
 
@@ -375,13 +377,18 @@ public class CodeGenerator implements TreeVisitor, StatementTransform<Code>,
 	public Code visitFieldAccessNode(FieldAccessNode node) {
 		// TODO Auto-generated method stub
 		Code code = new Code();
+		code.append(node.getRecord().genCode(this));
 		return code;
+
 	}
 
 	@Override
 	public Code visitRecordConstructorNode(RecordConstructorNode node) {
 		// TODO Auto-generated method stub
 		Code code = new Code();
+		for(ExpNode exp : node.getExpList()) {
+			code.append(exp.genCode(this));
+		}
 		return code;
 	}
 
